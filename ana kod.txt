@@ -1,0 +1,1429 @@
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <!-- FontAwesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        /* TEMEL AYARLAR VE RENK PALETİ */
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-parchment: #FDFBF7;
+            --text-dark-sage: #2A3B32;
+            --text-light: #5A6B62;
+            --accent-gold: #C5A059;
+            --accent-gold-hover: #D4AF37;
+            --card-bg: #FFFFFF;
+            --border-soft: #EAE5D9;
+            --transition-speed: 0.3s;
+        }
+
+        .hidden-el {
+            display: none !important;
+        }
+
+        /* --- BLOGGER AGRESİF RESET VE ANTI-BR FİLTRESİ --- */
+        html, body {
+            width: 100% !important;
+            height: 100% !important;
+            overflow: hidden !important;
+            position: fixed !important;
+        }
+
+        .custom-page-wrapper br {
+            display: none !important;
+        }
+        
+        .card-answer br, .modal-answer br {
+            display: block !important;
+            content: "";
+            margin-top: 8px;
+        }
+
+        .custom-page-wrapper p {
+            margin: 0;
+            padding: 0;
+        }
+
+        .custom-page-wrapper * {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .custom-page-wrapper {
+            position: fixed !important; 
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            z-index: 999999 !important; 
+            background-color: var(--bg-parchment) !important; 
+            overflow-y: auto !important; 
+            overflow-x: hidden !important;
+            -webkit-overflow-scrolling: touch;
+            display: block !important; 
+            padding: 0 0 120px 0 !important; 
+            font-family: 'Outfit', sans-serif;
+            color: var(--text-dark-sage);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* === MİSTİK ARKA PLAN ANİMASYONLARI === */
+        .mystic-bg-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: -1; 
+            overflow: hidden;
+        }
+
+        .mystic-symbol {
+            position: absolute;
+            color: var(--accent-gold);
+            font-family: 'Cinzel', serif;
+            opacity: 0.04; 
+            user-select: none;
+            filter: blur(1px); 
+        }
+
+        @keyframes floatRotate { 100% { transform: rotate(360deg) translate(50px, 50px); } }
+        @keyframes floatRotateReverse { 100% { transform: rotate(-360deg) translate(-50px, -50px); } }
+        @keyframes floatUp { 100% { transform: translateY(-100px); } }
+        @keyframes floatPulse { 100% { transform: scale(1.1); opacity: 0.05; } }
+
+        .symbol-1 { top: 10%; left: 5%; font-size: 15rem; animation: floatRotate 45s infinite linear; }
+        .symbol-2 { top: 60%; right: 5%; font-size: 20rem; opacity: 0.03; animation: floatRotateReverse 60s infinite linear; }
+        .symbol-3 { bottom: -10%; left: 20%; font-size: 12rem; animation: floatUp 35s infinite ease-in-out alternate; }
+        .symbol-4 { top: 25%; right: 25%; font-size: 8rem; color: var(--text-dark-sage); opacity: 0.02; animation: floatPulse 25s infinite ease-in-out alternate; }
+
+        /* HEADER TASARIMI */
+        .irfan-header {
+            text-align: center;
+            padding: 60px 20px 40px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .irfan-subtitle {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 500;
+            letter-spacing: 3px;
+            color: var(--accent-gold);
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .irfan-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2.8rem;
+            color: var(--text-dark-sage);
+            margin-bottom: 20px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .irfan-title::after {
+            content: "\2726"; 
+            display: block;
+            color: var(--accent-gold);
+            font-size: 1.2rem;
+            margin-top: 10px;
+        }
+
+        .irfan-description {
+            font-family: 'Lora', serif;
+            font-size: 1.1rem;
+            color: var(--text-light);
+            font-style: italic;
+        }
+
+        /* ARAMA VE FİLTRELEME ALANI */
+        .controls-container {
+            max-width: 1200px;
+            margin: 0 auto 40px;
+            padding: 0 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .search-actions-wrapper {
+            display: flex;
+            width: 100%;
+            max-width: 700px;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .search-wrapper {
+            position: relative;
+            flex-grow: 1;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 16px 20px;
+            border: 1px solid var(--border-soft);
+            border-radius: 8px;
+            background: var(--card-bg);
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.05rem;
+            color: var(--text-dark-sage);
+            outline: none;
+            transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.1);
+        }
+
+        .search-input::placeholder {
+            color: #A0ABA5;
+        }
+
+        .random-btn {
+            background: var(--text-dark-sage);
+            color: var(--bg-parchment);
+            border: none;
+            padding: 16px 24px;
+            border-radius: 8px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: background var(--transition-speed), transform var(--transition-speed);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .random-btn:hover {
+            background: var(--accent-gold);
+            transform: translateY(-2px);
+        }
+
+        /* BLOGGER TEMA EZİCİ: ID BAZLI FİLTRE ALANI */
+        #irfan-wrapper .filter-buttons {
+            display: flex !important;
+            flex-wrap: wrap !important;
+            justify-content: center !important;
+            gap: 10px !important;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+
+        #irfan-wrapper .filter-buttons .filter-btn {
+            background: transparent !important;
+            background-image: none !important; 
+            border: 1px solid var(--border-soft) !important;
+            color: var(--text-light) !important;
+            padding: 10px 18px !important;
+            border-radius: 8px !important; 
+            font-family: 'Outfit', sans-serif !important;
+            font-size: 0.95rem !important;
+            cursor: pointer !important;
+            font-weight: 500 !important;
+            transition: all var(--transition-speed) !important;
+            box-shadow: none !important;
+            outline: none !important;
+            margin: 0 !important;
+        }
+
+        #irfan-wrapper .filter-buttons .filter-btn:hover {
+            border-color: var(--accent-gold) !important;
+            color: var(--text-dark-sage) !important;
+            background: var(--bg-parchment) !important;
+        }
+
+        #irfan-wrapper .filter-buttons .filter-btn.active {
+            background: var(--text-dark-sage) !important;
+            border-color: var(--text-dark-sage) !important;
+            color: var(--card-bg) !important;
+        }
+
+        #irfan-wrapper .filter-buttons .count-badge {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            background-color: var(--border-soft) !important;
+            color: var(--text-dark-sage) !important;
+            font-size: 0.75rem !important;
+            font-weight: 600 !important;
+            border-radius: 4px !important;
+            padding: 2px 6px !important;
+            margin-left: 8px !important;
+            border: none !important;
+        }
+
+        #irfan-wrapper .filter-buttons .filter-btn.active .count-badge {
+            background-color: var(--accent-gold) !important;
+            color: var(--bg-parchment) !important;
+        }
+
+        /* === KART GRID SISTEMI === */
+        .qa-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 0px 40px;
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px; 
+            align-items: start; 
+        }
+
+        .qa-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-soft);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; 
+            padding: 0; 
+            position: relative;
+            transition: transform var(--transition-speed), box-shadow var(--transition-speed), border-color var(--transition-speed);
+        }
+
+        .qa-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            border-color: #e0d8c3;
+        }
+
+        .qa-card.is-read {
+            background-color: #fcfcfb; 
+            border-color: #f0f0f0;
+            box-shadow: none;
+        }
+
+        .card-header-clickable {
+            padding: 20px; 
+            display: flex;
+            flex-direction: column; 
+            cursor: pointer;
+            position: relative;
+        }
+
+        .card-meta-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .card-meta-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-category {
+            display: inline-block;
+            background-color: rgba(197, 160, 89, 0.1); 
+            color: #b08d4f; 
+            border: none; 
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .qa-card.is-read .card-category {
+            background-color: rgba(74, 124, 89, 0.1);
+            color: #4A7C59;
+        }
+
+        .read-tick {
+            display: none;
+            font-weight: 800;
+            margin-left: 5px;
+        }
+
+        .qa-card.is-read .read-tick {
+            display: inline-block;
+        }
+        
+        .reading-time {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: 500;
+        }
+
+        .share-btn {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: color var(--transition-speed);
+            padding: 5px;
+            z-index: 2;
+        }
+
+        .share-btn:hover {
+            color: var(--accent-gold);
+        }
+
+        .card-question {
+            font-family: 'Lora', serif;
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--text-dark-sage);
+            line-height: 1.4;
+            margin: 0; 
+            padding-right: 20px; 
+        }
+
+        .card-question mark {
+            background-color: rgba(197, 160, 89, 0.3);
+            color: var(--text-dark-sage);
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+
+        .card-indicator {
+            position: absolute;
+            right: 20px;
+            bottom: 20px;
+            color: var(--text-light);
+            font-size: 1rem;
+            transition: transform var(--transition-speed);
+        }
+
+        .qa-card.active .card-indicator {
+            transform: rotate(180deg);
+        }
+
+        .card-answer-wrapper {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows var(--transition-speed) ease-in-out;
+            padding: 0 3px; 
+        }
+
+        .qa-card.active .card-answer-wrapper {
+            grid-template-rows: 1fr;
+            padding-bottom: 20px; 
+        }
+
+        .card-answer-content {
+            overflow: hidden;
+        }
+
+        .card-answer {
+            padding-top: 5px; 
+            border-top: 1px solid rgba(0,0,0,0.06); 
+            font-size: 1.05rem;
+            color: var(--text-light);
+            line-height: 1.6;
+            font-family: 'Outfit', sans-serif;
+            padding-left: 17px;
+            padding-right: 17px;
+        }
+
+        /* Geri Bildirim ve Sesli Okuma Alanı */
+        #irfan-wrapper .feedback-container {
+            margin-top: 15px !important;
+            padding: 0 17px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            flex-wrap: wrap !important;
+            gap: 12px !important;
+            background: transparent !important;
+            border: none !important;
+        }
+
+        #irfan-wrapper .feedback-buttons {
+            display: flex !important;
+            gap: 8px !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        #irfan-wrapper .feedback-btn {
+            background: #ffffff !important;
+            border: 1px solid var(--border-soft) !important;
+            color: var(--text-light) !important;
+            padding: 6px 12px !important;
+            border-radius: 6px !important; 
+            font-size: 0.85rem !important;
+            font-weight: 600 !important;
+            font-family: 'Outfit', sans-serif !important;
+            cursor: pointer !important;
+            transition: all var(--transition-speed) !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            outline: none !important;
+        }
+        
+        #irfan-wrapper .tts-btn {
+            background: transparent !important;
+            border: 1px solid var(--accent-gold) !important;
+            color: var(--accent-gold) !important;
+            padding: 6px 12px !important;
+            border-radius: 6px !important;
+            font-size: 0.85rem !important;
+            font-weight: 600 !important;
+            font-family: 'Outfit', sans-serif !important;
+            cursor: pointer !important;
+            transition: all var(--transition-speed) !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            outline: none !important;
+        }
+
+        @media (hover: hover) {
+            #irfan-wrapper .feedback-btn:hover {
+                border-color: var(--accent-gold) !important;
+                color: var(--text-dark-sage) !important;
+                background: #FCFAF5 !important;
+                transform: translateY(-1px) !important;
+            }
+            #irfan-wrapper .tts-btn:hover {
+                background: var(--bg-parchment) !important;
+            }
+        }
+
+        #irfan-wrapper .feedback-btn.like-active {
+            background: #eef7ee !important;
+            border-color: #4A7C59 !important;
+            color: #4A7C59 !important;
+        }
+
+        #irfan-wrapper .feedback-btn.dislike-active {
+            background: #fdf2f2 !important;
+            border-color: #d9534f !important;
+            color: #d9534f !important;
+        }
+
+        #irfan-wrapper .feedback-thanks {
+            font-size: 0.85rem !important;
+            color: var(--accent-gold) !important;
+            font-weight: 600 !important;
+            animation: fadeIn 0.5s;
+            margin: 0 !important;
+            width: 100%;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        #irfan-wrapper .read-more-btn {
+            background: transparent !important;
+            border: none !important;
+            color: var(--accent-gold) !important;
+            font-family: 'Outfit', sans-serif !important;
+            font-size: 1rem !important;
+            font-weight: 600 !important;
+            margin: 10px 0 0 0 !important;
+            cursor: pointer !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 5px !important;
+            transition: color var(--transition-speed) !important;
+            padding: 0 !important;
+        }
+
+        #irfan-wrapper .read-more-btn::after {
+            content: "\2192" !important; 
+            font-size: 1.1rem !important;
+            transition: transform var(--transition-speed) !important;
+            display: inline-block !important;
+        }
+
+        #irfan-wrapper .read-more-btn:hover {
+            color: var(--accent-gold-hover) !important;
+        }
+
+        #irfan-wrapper .read-more-btn:hover::after {
+            transform: translateX(5px) !important;
+        }
+
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 50px;
+            font-family: 'Lora', serif;
+            color: var(--text-light);
+            font-size: 1.2rem;
+            font-style: italic;
+        }
+
+        .sentinel {
+            width: 100%;
+            height: 20px;
+        }
+
+        /* YORUM ALANI ENTEGRASYONU */
+        .irfan-comments-section {
+            max-width: 800px;
+            margin: 0 auto 60px auto;
+            padding: 40px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-soft);
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.03);
+            display: none; 
+        }
+        
+        .irfan-comments-section.visible {
+            display: block;
+        }
+
+        .comments-header-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            color: var(--text-dark-sage);
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 1px dashed var(--border-soft);
+            padding-bottom: 15px;
+        }
+        
+        .irfan-comments-section iframe {
+            width: 100% !important;
+            border: none !important;
+            min-height: 250px;
+        }
+
+        /* ANA SAYFA BUTONU */
+        .back-home-footer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            margin: 40px 0 60px 0;
+            padding-bottom: 20px;
+        }
+
+        .back-home-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 30px;
+            background: var(--bg-parchment);
+            border: 2px solid var(--accent-gold);
+            color: var(--text-dark-sage);
+            border-radius: 8px; 
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            text-decoration: none !important;
+            transition: var(--transition-speed);
+            box-shadow: 0 4px 15px rgba(197, 160, 89, 0.15); 
+            font-size: 1rem;
+        }
+
+        .back-home-btn:hover {
+            background: var(--accent-gold);
+            color: var(--card-bg);
+            transform: translateY(-3px); 
+            box-shadow: 0 8px 25px rgba(197, 160, 89, 0.3);
+        }
+
+        /* MODAL VE BENZER SORULAR */
+        .irfan-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(42, 59, 50, 0.85);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 1000000 !important;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+
+        .irfan-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .irfan-modal-content {
+            background: var(--bg-parchment);
+            width: 90%;
+            max-width: 750px;
+            max-height: 85vh;
+            border-radius: 12px; 
+            padding: 40px;
+            position: relative;
+            transform: translateY(30px) scale(0.95);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow-y: auto;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3); 
+        }
+
+        .irfan-modal-overlay.active .irfan-modal-content {
+            transform: translateY(0) scale(1);
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 2.2rem;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: color var(--transition-speed);
+            line-height: 1;
+        }
+
+        .modal-close-btn:hover {
+            color: var(--text-dark-sage);
+        }
+
+        .modal-category {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent-gold);
+            font-weight: 500;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .modal-question {
+            font-family: 'Cinzel', serif;
+            font-size: 1.6rem;
+            color: var(--text-dark-sage);
+            margin-bottom: 25px;
+            line-height: 1.3;
+            border-bottom: 1px dashed var(--border-soft);
+            padding-bottom: 15px;
+        }
+
+        .modal-answer {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            color: var(--text-dark-sage);
+            line-height: 1.7;
+            white-space: pre-wrap; 
+        }
+        
+        .related-questions-wrapper {
+            margin-top: 40px;
+            padding-top: 25px;
+            border-top: 1px dashed var(--border-soft);
+        }
+
+        .related-questions-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            color: var(--accent-gold);
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .related-question-link {
+            display: block;
+            padding: 15px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-soft);
+            border-radius: 8px;
+            margin-bottom: 12px;
+            color: var(--text-dark-sage);
+            font-family: 'Lora', serif;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform var(--transition-speed), border-color var(--transition-speed);
+        }
+
+        .related-question-link:hover {
+            transform: translateX(5px);
+            border-color: var(--accent-gold);
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (max-width: 768px) {
+            .search-actions-wrapper { flex-direction: column; }
+            .random-btn { width: 100%; justify-content: center; }
+            .custom-page-wrapper { padding: 0 0 100px 0 !important; }
+            .irfan-title { font-size: 2.2rem; }
+            .qa-grid { grid-template-columns: 1fr; gap: 20px; }
+            .irfan-modal-content { padding: 30px 20px; width: 95%; max-height: 90vh; }
+            .modal-question { font-size: 1.4rem; }
+            .back-home-btn { font-size: 0.95rem; padding: 14px 28px; }
+            .irfan-comments-section { padding: 25px 20px; width: 90%; }
+            #irfan-wrapper .feedback-container { flex-direction: column; align-items: flex-start !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="custom-page-wrapper" id="irfan-wrapper">
+
+    <div class="mystic-bg-container">
+        <div class="mystic-symbol symbol-1">۞</div>
+        <div class="mystic-symbol symbol-2">۞</div>
+        <div class="mystic-symbol symbol-3">✦</div>
+        <div class="mystic-symbol symbol-4">✦</div>
+    </div>
+
+    <header class="irfan-header">
+        <span class="irfan-subtitle">Soru &amp; Cevap</span>
+        <h1 class="irfan-title">İslami ve Ezoterik Meraklarımız</h1>
+        <p class="irfan-description">Sorularınıza yanıtlar bulacağınız dijital dergâh.</p>
+    </header>
+    
+    <div class="back-home-footer">
+        <a class="back-home-btn" href="https://tr.tabirly.com">
+            <i class="fas fa-home"></i>
+            <span>Tabirly Ana Sayfaya Geri Dön</span>
+        </a>
+    </div>
+
+    <div class="controls-container">
+        <div class="search-actions-wrapper">
+            <div class="search-wrapper">
+                <input class="search-input" id="searchInput" placeholder="Hakikati arayın... (Örn: frekans, rüya, şifa)" type="text" aria-label="Sorularda ara" />
+            </div>
+            <button class="random-btn" id="randomBtn" title="Evrenin sana mesajı var...">
+                <i class="fas fa-dice-d20"></i> Rastgele Seç
+            </button>
+        </div>
+        <div class="filter-buttons" id="filterContainer" role="group" aria-label="Kategori Filtreleri">
+            <!-- Kategoriler JS ile gelecek -->
+        </div>
+    </div>
+
+    <div class="qa-grid" id="qaGrid" role="list">
+        <!-- Kartlar JS ile gelecek -->
+    </div>
+    
+    <div class="sentinel" id="scrollSentinel"></div>
+
+    <div class="irfan-comments-section" id="custom-comments-container">
+        <h3 class="comments-header-title">Sorularınızı Paylaşın</h3>
+        <!-- Blogger yorum içeriği -->
+    </div>
+
+    <div class="irfan-modal-overlay" id="irfanModal" aria-hidden="true" role="dialog">
+        <div class="irfan-modal-content">
+            <button class="modal-close-btn" id="modalCloseBtn" aria-label="Kapat">×</button>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
+                <span class="modal-category" id="modalCategory" style="margin-bottom:0;"></span>
+                <button class="tts-btn" id="modalTtsBtn" onclick="toggleTTS(modalAnswer.textContent, event, this.id)"><i class="fas fa-volume-up"></i> Dinle</button>
+            </div>
+            <h2 class="modal-question" id="modalQuestion"></h2>
+            <div class="modal-answer" id="modalAnswer"></div>
+            <div class="related-questions-wrapper" id="modalRelatedQuestions"></div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    (function() {
+        var wrapper = document.getElementById('irfan-wrapper');
+        if (wrapper && document.body) document.body.appendChild(wrapper);
+    })();
+
+    const DATA_URL = 'https://raw.githubusercontent.com/Tabirly/tabirly-sorular/main/tabirly-sorular.json';
+
+    const FORM_ID = "1FAIpQLSeZLLflmxpBDp28LLvN-phGQaFBqDehuHnhfuINFn9vZ9Z-Ag";
+    const GOOGLE_FORM_URL = `https://docs.google.com/forms/d/e/${FORM_ID}/formResponse`;
+    const ENTRY_FEEDBACK = "entry.1119340361";
+    const ENTRY_PAGE     = "entry.423129414";
+    const ENTRY_TITLE    = "entry.1041721423";
+    const ENTRY_UA       = "entry.589683126";
+
+    let qaData = [];
+    let filteredData = [];
+    let currentFilter = 'all';
+    let searchTerm = '';
+    
+    let currentIndex = 0;
+    const ITEMS_PER_LOAD = 15;
+    
+    let readItems = JSON.parse(localStorage.getItem('tabirly_read_qas') || '[]');
+    let feedbackItems = JSON.parse(localStorage.getItem('tabirly_feedbacks') || '{}');
+
+    const qaGrid = document.getElementById('qaGrid');
+    const scrollSentinel = document.getElementById('scrollSentinel');
+    const searchInput = document.getElementById('searchInput');
+    const filterContainer = document.getElementById('filterContainer');
+    const randomBtn = document.getElementById('randomBtn');
+    
+    const irfanModal = document.getElementById('irfanModal');
+    const modalCloseBtn = document.getElementById('modalCloseBtn');
+    const modalCategory = document.getElementById('modalCategory');
+    const modalQuestion = document.getElementById('modalQuestion');
+    const modalAnswer = document.getElementById('modalAnswer');
+    const modalRelatedQuestions = document.getElementById('modalRelatedQuestions');
+    const modalTtsBtn = document.getElementById('modalTtsBtn');
+
+    // Debounce
+    function debounce(func, delay) {
+        let timer;
+        return function(...args) {
+            clearTimeout(timer);
+            timer = setTimeout(() => func.apply(this, args), delay);
+        };
+    }
+
+    // Arama vurgulama (Highlight)
+    function highlightText(text, term) {
+        if (!term) return text;
+        const regex = new RegExp(`(${term})`, 'gi');
+        return text.replace(regex, '<mark>$1</mark>');
+    }
+    
+    // Okuma süresi hesaplama
+    function getReadingTime(text) {
+        const words = text.trim().split(/\s+/).length;
+        const minutes = Math.ceil(words / 200); // Ortalama 200 kelime/dk
+        return minutes;
+    }
+
+    function entegreBloggerYorumlari() {
+        const bloggerComments = document.getElementById('comments') || 
+                                document.querySelector('.comments') || 
+                                document.getElementById('comment-holder');
+        const bizimKutu = document.getElementById('custom-comments-container');
+
+        if (bloggerComments && bizimKutu) {
+            bizimKutu.appendChild(bloggerComments);
+            bizimKutu.classList.add('visible');
+        }
+    }
+
+    async function loadIrfanData() {
+        qaGrid.innerHTML = '<div class="no-results"><i class="fas fa-spinner fa-spin"></i> Kadim sırlar ve hakikatler yükleniyor...</div>';
+        
+        try {
+            const cachedData = sessionStorage.getItem('tabirly_qa_cache');
+            if (cachedData) {
+                qaData = JSON.parse(cachedData);
+            } else {
+                const response = await fetch(DATA_URL);
+                if (!response.ok) throw new Error('Ağ yanıtı sorunlu');
+                qaData = await response.json();
+                sessionStorage.setItem('tabirly_qa_cache', JSON.stringify(qaData));
+            }
+        } catch (error) {
+            console.warn('Veriler yüklenemedi.', error);
+            qaGrid.innerHTML = '<div class="no-results">Enerji akışında bir kesinti oldu. Lütfen sayfayı yenileyin.</div>';
+            return;
+        }
+
+        generateFilterButtons(qaData);
+        filterData();
+        generateFAQSchema();
+        setTimeout(entegreBloggerYorumlari, 500); 
+
+        // URL'de doğrudan soru ID'si varsa (paylaşılan bir linkten gelindiyse) otomatik aç
+        const urlParams = new URLSearchParams(window.location.search);
+        const directQuestionId = urlParams.get('soru');
+        if (directQuestionId) {
+            const idNum = parseInt(directQuestionId, 10);
+            if (qaData.some(q => q.id === idNum)) {
+                setTimeout(() => { openModal(idNum); }, 400); // Sistem yüklendikten hemen sonra modalı aç
+            }
+        }
+    }
+
+    function generateFilterButtons(data) {
+        filterContainer.innerHTML = '';
+        const totalCount = data.length;
+
+        const allBtn = document.createElement('button');
+        allBtn.className = 'filter-btn active';
+        allBtn.setAttribute('data-filter', 'all');
+        allBtn.setAttribute('aria-pressed', 'true');
+        allBtn.innerHTML = `Tüm Sırlar <span class="count-badge">${totalCount}</span>`;
+        filterContainer.appendChild(allBtn);
+
+        const categoryCounts = {};
+        data.forEach(item => {
+            categoryCounts[item.category] = (categoryCounts[item.category] || 0) + 1;
+        });
+
+        Object.keys(categoryCounts).forEach(category => {
+            const btn = document.createElement('button');
+            btn.className = 'filter-btn';
+            btn.setAttribute('data-filter', category);
+            btn.setAttribute('aria-pressed', 'false');
+            btn.innerHTML = `${category} <span class="count-badge">${categoryCounts[category]}</span>`;
+            filterContainer.appendChild(btn);
+        });
+
+        filterContainer.addEventListener('click', (e) => {
+            const targetBtn = e.target.closest('.filter-btn');
+            if (targetBtn) {
+                document.querySelectorAll('.filter-btn').forEach(b => {
+                    b.classList.remove('active');
+                    b.setAttribute('aria-pressed', 'false');
+                });
+                targetBtn.classList.add('active');
+                targetBtn.setAttribute('aria-pressed', 'true');
+                currentFilter = targetBtn.getAttribute('data-filter');
+                filterData();
+            }
+        });
+    }
+
+    function createCardElement(item) {
+        const card = document.createElement('div');
+        card.className = 'qa-card';
+        card.setAttribute('data-id', item.id);
+        card.setAttribute('role', 'listitem');
+        
+        if (readItems.includes(item.id)) {
+            card.classList.add('is-read');
+        }
+        
+        const maxLength = 250;
+        let displayAnswer = item.answer.replace(/\n/g, '<br>');
+        let readMoreHTML = '';
+        
+        if (item.answer.length > maxLength) {
+            displayAnswer = item.answer.substring(0, maxLength).replace(/\n/g, '<br>') + '...';
+            readMoreHTML = `<br><button class="read-more-btn" onclick="openModal(${item.id}, event)" aria-label="Cevabın tamamını oku">Tamamını Oku</button>`;
+        }
+
+        const userFeedback = feedbackItems[item.id];
+        const isLikeActive = userFeedback === 'like' ? 'like-active' : '';
+        const isDislikeActive = userFeedback === 'dislike' ? 'dislike-active' : '';
+        
+        const highlightedTitle = highlightText(item.question, searchTerm);
+        const readingTime = getReadingTime(item.answer);
+
+        card.innerHTML = `
+            <div class="card-header-clickable" tabindex="0" aria-expanded="false" role="button">
+                <div class="card-meta-row">
+                    <div class="card-meta-left">
+                        <span class="card-category">
+                            ${item.category} 
+                            <span class="read-tick" title="Okundu">✓</span>
+                        </span>
+                        <span class="reading-time" title="Tahmini okuma süresi"><i class="fas fa-hourglass-half"></i> ${readingTime} dk</span>
+                    </div>
+                    <button class="share-btn" onclick="shareQuestion(${item.id}, event)" title="Bu soruyu paylaş" aria-label="Paylaş">
+                        <i class="fas fa-share-alt"></i>
+                    </button>
+                </div>
+                <h3 class="card-question">${highlightedTitle}</h3>
+                <div class="card-indicator"><i class="fas fa-chevron-down"></i></div>
+            </div>
+            
+            <div class="card-answer-wrapper" aria-hidden="true">
+                <div class="card-answer-content">
+                    <div class="card-answer">
+                        ${displayAnswer}
+                        ${readMoreHTML}
+                    </div>
+                    
+                    <div class="feedback-container" id="feedback-${item.id}">
+                        <div class="feedback-buttons">
+                            <button class="feedback-btn ${isLikeActive}" onclick="sendFeedback(${item.id}, 'like', event)"><i class="fas fa-thumbs-up"></i> Beğendim</button>
+                            <button class="feedback-btn ${isDislikeActive}" onclick="sendFeedback(${item.id}, 'dislike', event)"><i class="fas fa-thumbs-down"></i> Beğenmedim</button>
+                        </div>
+                        <button class="tts-btn" id="tts-btn-${item.id}" onclick="toggleTTS('${item.answer.replace(/'/g, "\\'")}', event, this.id)"><i class="fas fa-volume-up"></i> Dinle</button>
+                        <span class="feedback-thanks hidden-el">✦ Teşekkürler!</span>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        const headerArea = card.querySelector('.card-header-clickable');
+        headerArea.addEventListener('click', () => toggleCard(card, item.id));
+        headerArea.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleCard(card, item.id);
+            }
+        });
+
+        return card;
+    }
+
+    function filterData() {
+        filteredData = qaData;
+
+        if (currentFilter !== 'all') {
+            filteredData = filteredData.filter(item => item.category === currentFilter);
+        }
+
+        if (searchTerm) {
+            const lowerTerm = searchTerm.toLowerCase();
+            filteredData = filteredData.filter(item => 
+                item.question.toLowerCase().includes(lowerTerm) || 
+                item.answer.toLowerCase().includes(lowerTerm)
+            );
+        }
+        
+        currentIndex = 0;
+        qaGrid.innerHTML = '';
+        
+        if(filteredData.length === 0) {
+            qaGrid.innerHTML = '<div class="no-results">Bu frekansta bir yanıt bulunamadı. Lütfen aramanızı farklı kelimelerle tekrarlayın.</div>';
+            scrollSentinel.style.display = 'none';
+            return;
+        }
+        
+        scrollSentinel.style.display = 'block';
+        loadMoreCards();
+    }
+    
+    function loadMoreCards() {
+        if (currentIndex >= filteredData.length) return;
+        
+        const fragment = document.createDocumentFragment();
+        const chunk = filteredData.slice(currentIndex, currentIndex + ITEMS_PER_LOAD);
+        
+        chunk.forEach(item => {
+            fragment.appendChild(createCardElement(item));
+        });
+        
+        qaGrid.appendChild(fragment);
+        currentIndex += ITEMS_PER_LOAD;
+        
+        if(currentIndex >= filteredData.length) {
+            scrollSentinel.style.display = 'none';
+        }
+    }
+
+    // Sonsuz kaydırma için IntersectionObserver
+    const observer = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+            loadMoreCards();
+        }
+    }, { rootMargin: '200px' });
+    observer.observe(scrollSentinel);
+
+    function toggleCard(card, id) {
+        const isActive = card.classList.contains('active');
+        const header = card.querySelector('.card-header-clickable');
+        const wrapper = card.querySelector('.card-answer-wrapper');
+        
+        document.querySelectorAll('.qa-card.active').forEach(activeCard => {
+            activeCard.classList.remove('active');
+            activeCard.querySelector('.card-header-clickable').setAttribute('aria-expanded', 'false');
+            activeCard.querySelector('.card-answer-wrapper').setAttribute('aria-hidden', 'true');
+        });
+
+        if (!isActive) {
+            card.classList.add('active');
+            header.setAttribute('aria-expanded', 'true');
+            wrapper.setAttribute('aria-hidden', 'false');
+        }
+        
+        markAsRead(id, card);
+    }
+    
+    // Sesli Okuma (TTS) Motoru
+    window.toggleTTS = function(text, event, btnId) {
+        if(event) event.stopPropagation();
+        const btn = document.getElementById(btnId);
+        
+        if (window.speechSynthesis.speaking) {
+            window.speechSynthesis.cancel();
+            document.querySelectorAll('.tts-btn').forEach(b => {
+                b.innerHTML = '<i class="fas fa-volume-up"></i> Dinle';
+                b.dataset.playing = "false";
+            });
+            if (btn && btn.dataset.playing === "true") {
+                return; // Eğer çalışan butona tıklandıysa sadece durdur.
+            }
+        }
+        
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'tr-TR';
+        utterance.rate = 0.95; 
+        
+        utterance.onend = () => {
+            if(btn) {
+                btn.innerHTML = '<i class="fas fa-volume-up"></i> Dinle';
+                btn.dataset.playing = "false";
+            }
+        };
+        
+        if(btn) {
+            btn.innerHTML = '<i class="fas fa-stop"></i> Durdur';
+            btn.dataset.playing = "true";
+        }
+        
+        window.speechSynthesis.speak(utterance);
+    };
+
+    // Web Share API
+    window.shareQuestion = async function(id, event) {
+        event.stopPropagation();
+        const item = qaData.find(q => q.id === id);
+        if (!item) return;
+
+        let pageUrl = window.location.href;
+        // Mevcut URL'deki eski parametreleri temizle (üst üste binmemesi için)
+        pageUrl = pageUrl.split('?')[0]; 
+
+        const canonicalMeta = document.querySelector('link[rel="canonical"]');
+        if (canonicalMeta && canonicalMeta.href) {
+            pageUrl = canonicalMeta.href;
+        }
+        
+        // ÖNİZLEME KORUMASI VE GARANTİ LİNK:
+        // Eğer sistem 'tabirly.com'da olmadığını fark ederse (örneğin şu anki test ekranında)
+        // veya link okumada sorun yaşarsa aşağıdaki linki kullanır.
+        // LÜTFEN AŞAĞIDAKİ LİNKİ BU ARACI YAYINLAYACAĞIN SAYFANIN TAM LİNKİ İLE DEĞİŞTİR.
+        if (!pageUrl.includes('tabirly.com')) {
+             pageUrl = 'https://tr.tabirly.com/p/islami-ve-ezoterik-soru-cevap.html'; 
+        }
+
+        // Linke doğrudan soruyu açacak parametreyi ekliyoruz (?soru=ID)
+        const urlObj = new URL(pageUrl);
+        urlObj.searchParams.set('soru', item.id);
+        const finalUrl = urlObj.toString();
+
+        const shareData = {
+            title: 'Tabirly - İslami ve Ezoterik Meraklar',
+            text: `Soru: ${item.question}\n\nDetaylı cevabı okumak için Tabirly'yi ziyaret et:`,
+            url: finalUrl
+        };
+
+        if (navigator.share) {
+            try {
+                await navigator.share(shareData);
+            } catch (err) {
+                console.log('Paylaşım iptal edildi veya desteklenmiyor.', err);
+            }
+        } else {
+            // Desteklemeyen tarayıcılar için zarif kopyalama işlemi
+            const fallbackInput = document.createElement('textarea');
+            fallbackInput.value = `${shareData.text} \n${shareData.url}`;
+            document.body.appendChild(fallbackInput);
+            fallbackInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(fallbackInput);
+            
+            showToast('Bağlantı panoya kopyalandı! ✦');
+        }
+    };
+
+    // Şık Bildirim Mesajı (Toast Notification)
+    function showToast(message) {
+        let toast = document.getElementById('irfan-toast');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'irfan-toast';
+            toast.style.cssText = 'position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:var(--text-dark-sage); color:var(--accent-gold); padding:12px 24px; border-radius:8px; z-index:9999999; font-family:"Outfit", sans-serif; font-weight:600; box-shadow:0 10px 30px rgba(0,0,0,0.2); transition:opacity 0.4s ease; opacity:0; pointer-events:none;';
+            document.body.appendChild(toast);
+        }
+        toast.textContent = message;
+        toast.style.display = 'block';
+        setTimeout(() => toast.style.opacity = '1', 10);
+        setTimeout(() => { 
+            toast.style.opacity = '0'; 
+            setTimeout(() => toast.style.display = 'none', 400); 
+        }, 3000);
+    }
+
+    window.sendFeedback = async function(id, type, event) {
+        event.stopPropagation();
+        
+        const container = document.getElementById(`feedback-${id}`);
+        const buttons = container.querySelectorAll('.feedback-btn');
+        const thanksMsg = container.querySelector('.feedback-thanks');
+
+        if (feedbackItems[id] === type) {
+            showThanks(thanksMsg);
+            return;
+        }
+
+        buttons.forEach(btn => {
+            btn.classList.remove('like-active', 'dislike-active');
+            if (btn.textContent.includes('Beğendim') && type === 'like') {
+                btn.classList.add('like-active');
+            } else if (btn.textContent.includes('Beğenmedim') && type === 'dislike') {
+                btn.classList.add('dislike-active');
+            }
+        });
+        
+        showThanks(thanksMsg);
+
+        feedbackItems[id] = type;
+        localStorage.setItem('tabirly_feedbacks', JSON.stringify(feedbackItems));
+
+        const questionItem = qaData.find(q => q.id === id);
+        const questionTitle = questionItem ? questionItem.question : "Bilinmeyen Soru";
+
+        try {
+            const formData = new URLSearchParams();
+            formData.append(ENTRY_FEEDBACK, type === 'like' ? 'Beğendim' : 'Beğenmedim');
+            formData.append(ENTRY_PAGE, window.location.href);
+            formData.append(ENTRY_TITLE, `ID: ${id} - ${questionTitle}`);
+            formData.append(ENTRY_UA, navigator.userAgent);
+
+            fetch(GOOGLE_FORM_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: formData
+            });
+        } catch (error) {}
+    };
+
+    function showThanks(el) {
+        el.classList.remove('hidden-el');
+        setTimeout(() => el.classList.add('hidden-el'), 2000);
+    }
+
+    function markAsRead(id, cardElement) {
+        if (!readItems.includes(id)) {
+            readItems.push(id);
+            localStorage.setItem('tabirly_read_qas', JSON.stringify(readItems));
+            if(cardElement) cardElement.classList.add('is-read');
+        }
+    }
+
+    const handleSearch = debounce((e) => {
+        searchTerm = e.target.value.trim();
+        filterData();
+    }, 300);
+
+    searchInput.addEventListener('input', handleSearch);
+
+    randomBtn.addEventListener('click', () => {
+        if(qaData.length === 0) return;
+        const randomIndex = Math.floor(Math.random() * qaData.length);
+        const randomItem = qaData[randomIndex];
+        
+        searchInput.value = '';
+        searchTerm = '';
+        currentFilter = 'all';
+        document.querySelectorAll('.filter-btn').forEach(b => {
+            b.classList.remove('active');
+            if(b.getAttribute('data-filter') === 'all') b.classList.add('active');
+        });
+        filterData();
+        
+        openModal(randomItem.id, { stopPropagation: () => {} });
+    });
+
+    window.openModal = function(id, event) {
+        if(event) event.stopPropagation(); 
+        
+        const item = qaData.find(q => q.id === id);
+        if(item) {
+            const cardEl = document.querySelector(`.qa-card[data-id="${id}"]`);
+            markAsRead(id, cardEl);
+
+            modalCategory.textContent = item.category;
+            modalQuestion.textContent = item.question;
+            modalAnswer.innerHTML = item.answer.replace(/\n/g, '<br>');
+            
+            // İlgili Soruları (Benzer Sırlar) Bul ve Ekle
+            modalRelatedQuestions.innerHTML = '';
+            const related = qaData.filter(q => q.category === item.category && q.id !== id)
+                                  .sort(() => 0.5 - Math.random())
+                                  .slice(0, 2);
+                                  
+            if (related.length > 0) {
+                const title = document.createElement('h4');
+                title.className = 'related-questions-title';
+                title.textContent = 'Bunu okuyanlar bu sırlara da göz attı:';
+                modalRelatedQuestions.appendChild(title);
+                
+                related.forEach(r => {
+                    const link = document.createElement('div');
+                    link.className = 'related-question-link';
+                    link.textContent = r.question;
+                    link.onclick = () => {
+                        window.speechSynthesis.cancel(); // Yeni soruya geçerken sesi kapat
+                        openModal(r.id);
+                    };
+                    modalRelatedQuestions.appendChild(link);
+                });
+            }
+            
+            irfanModal.classList.add('active');
+            irfanModal.setAttribute('aria-hidden', 'false');
+            document.body.classList.add('modal-open');
+        }
+    };
+
+    function closeModal() {
+        irfanModal.classList.remove('active');
+        irfanModal.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('modal-open');
+        window.speechSynthesis.cancel(); // Modal kapanırken sesi iptal et
+        if (modalTtsBtn) {
+            modalTtsBtn.innerHTML = '<i class="fas fa-volume-up"></i> Dinle';
+            modalTtsBtn.dataset.playing = "false";
+        }
+    }
+
+    modalCloseBtn.addEventListener('click', closeModal);
+    irfanModal.addEventListener('click', (e) => {
+        if (e.target === irfanModal) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && irfanModal.classList.contains('active')) closeModal();
+    });
+
+    function generateFAQSchema() {
+        const oldSchema = document.querySelector('script[type="application/ld+json"]');
+        if(oldSchema) oldSchema.remove();
+
+        const schema = {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": qaData.map(item => ({
+                "@type": "Question",
+                "name": item.question,
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": item.answer
+                }
+            }))
+        };
+
+        const script = document.createElement('script');
+        script.type = 'application/ld+json';
+        script.text = JSON.stringify(schema);
+        document.head.appendChild(script);
+    }
+
+    document.addEventListener('DOMContentLoaded', loadIrfanData);
+
+</script>
+</body>
+</html>
